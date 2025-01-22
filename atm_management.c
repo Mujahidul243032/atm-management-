@@ -17,19 +17,21 @@ void displayMenu();
 void checkBalance(Account *account);
 void deposit(Account *account);
 void withdraw(Account *account);
-Account* createAccounts(int *num_accounts);
 
-// Main function
 int main() {
-    int num_accounts;
-    Account *accounts = createAccounts(&num_accounts);
+    Account accounts[] = {
+        {12345678, "1234", 1000.00},
+        {87654321, "4321", 500.00},
+        {11223344, "5678", 750.00}
+    };
+
+    int num_accounts = sizeof(accounts) / sizeof(Account);
     Account *logged_in_account = NULL;
 
     displayWelcomeMessage();
 
     if (!verifyPin(accounts, num_accounts, &logged_in_account)) {
         printf("Too many incorrect attempts. Exiting.\n");
-        free(accounts);
         return 1;
     }
 
@@ -62,25 +64,15 @@ int main() {
         printf("\n");
     }
 
-    free(accounts);
     return 0;
 }
 
-// Display functions
 void displayWelcomeMessage() {
     printf("================================\n");
     printf("|    Welcome to the ATM!       |\n");
     printf("================================\n\n");
 }
 
-void displayMenu() {
-    printf("1. Check Balance\n");
-    printf("2. Deposit Money\n");
-    printf("3. Withdraw Money\n");
-    printf("4. Exit\n");
-}
-
-// ATM operations
 bool verifyPin(Account *accounts, int num_accounts, Account **logged_in_account) {
     int account_number;
     char enteredPin[5];
@@ -112,6 +104,13 @@ bool verifyPin(Account *accounts, int num_accounts, Account **logged_in_account)
     return false;
 }
 
+void displayMenu() {
+    printf("1. Check Balance\n");
+    printf("2. Deposit Money\n");
+    printf("3. Withdraw Money\n");
+    printf("4. Exit\n");
+}
+
 void checkBalance(Account *account) {
     printf("Your current balance is: $%.2f\n", account->balance);
 }
@@ -140,23 +139,4 @@ void withdraw(Account *account) {
     } else {
         printf("Invalid amount or insufficient balance. Withdrawal failed.\n");
     }
-}
-
-// Create accounts dynamically
-Account* createAccounts(int *num_accounts) {
-    printf("Enter the number of accounts: ");
-    scanf("%d", num_accounts);
-
-    Account *accounts = (Account*)malloc((*num_accounts) * sizeof(Account));
-
-    for (int i = 0; i < *num_accounts; i++) {
-        printf("Enter account number for account %d: ", i + 1);
-        scanf("%d", &accounts[i].account_number);
-        printf("Enter PIN for account %d: ", i + 1);
-        scanf("%4s", accounts[i].pin);
-        printf("Enter initial balance for account %d: ", i + 1);
-        scanf("%lf", &accounts[i].balance);
-    }
-
-    return accounts;
 }
